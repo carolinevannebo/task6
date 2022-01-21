@@ -1,5 +1,7 @@
 package no.vannebo.caroline.bookregistry;
 
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -9,7 +11,18 @@ public class BookRegister {
     private final List<Book> books;
 
     public BookRegister() {
-        this.books = BookRepository.getBooksFromFile( "bok.txt");
+        this.books = BookRepository.getBooksFromFile( toPath("bok.txt"));
+    }
+
+    private String toPath(String filename){
+        String path = null;
+        try {
+            var url = BookRegister.class.getResource(filename);
+            path = Paths.get(url.toURI()).toString();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        return path;
     }
 
    public void printAllBook(){
