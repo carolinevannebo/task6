@@ -79,6 +79,7 @@ public class BookRegister {
         return books
                 .stream()
                 .map(book -> book.getAuthor())
+                .distinct()
                 .sorted()
                 .collect(Collectors.toList());
     }
@@ -86,6 +87,7 @@ public class BookRegister {
     public List<String> listGenre() {
         return books.stream()
                 .map(book -> book.getGenre().toString())
+                .distinct()
                 .sorted()
                 .collect(Collectors.toList());
     }

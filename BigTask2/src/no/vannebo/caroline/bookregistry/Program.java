@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Program {
 
@@ -16,6 +17,7 @@ public class Program {
     }
 
     private void printMainMenu() {
+        System.out.println("======== BOOK REGISTRY ========");
         System.out.println("1: All books");
         System.out.println("2: Add book");
         System.out.println("3: Edit book");
@@ -26,36 +28,11 @@ public class Program {
         System.out.println("8: Quit");
     }
 
-    public void handleUI(){
-        int choice = 0;
-
-        while(choice != 8){
-            printMainMenu();
-            choice = getInteger(1, 8);
-        }
-    }
-
-    private int getInteger(int min, int max){
-        int choice = min -1;
-        while(choice < min || choice > max){
-            System.out.println("make a choice");
-            try{
-                choice = scanner.nextInt();
-            } catch (InputMismatchException inputMismatchException){
-                System.out.println("thats not a number between" +  min + "or" + max);
-            }
-            if(choice < min || choice > max){
-                System.out.println("make a choice");
-            }
-        }
-        scanner.nextLine(); // reading carridge return
-        return choice;
-    }
-
     private String captureString(String label){
         System.out.println(label);
-        scanner.nextLine();
-        return scanner.nextLine().trim();
+        var line = scanner.nextLine().trim();
+        System.out.println("You entered: ["+line+"]");
+        return line;
     }
 
     public void menu(){
@@ -64,43 +41,58 @@ public class Program {
         while(isRunning){
             printMainMenu();
             int choice = scanner.nextInt();
-
             switch (choice){
                 case 1:
+                    System.out.println("======== LIST ALL BOOKS ========");
+                    scanner.nextLine();
                     bookRegister.printAllBook();
                     break;
                 case 2:
-                    System.out.println("Create new book");
+                    System.out.println("======== ADD NEW BOOK ========");
                     scanner.nextLine();
-                    var isbn = captureString("Please enter ISBN: ");
-                    var title = captureString("Please enter title: ");
-                    var author = captureString("Please enter author: ");
-                    var pages = Integer.valueOf(captureString("Please enter number of pages: ")).intValue();
-                    var genre = Enum.valueOf(Genre.class, captureString("Please enter genre: " + bookRegister.listGenre()));
-                    var book = new Book(isbn, title, author, pages, genre);
+                    Book book = createNewBook();
                     bookRegister.addBook(book);
-
+                    bookRegister.printAllBook();
+                    break;
+                case 3:
+                    System.out.println("======== EDIT BOOK ========");
+                    scanner.nextLine();
+                    break;
                 case 4:
                     System.out.println("Please enter genre: " + bookRegister.listGenre().toString());
-                    for (Book b: bookRegister.booksInGenre(Enum.valueOf(Genre.class, scanner.next()))) {
+                    scanner.nextLine();
+                    for (Book b: bookRegister.booksInGenre(Enum.valueOf(Genre.class, scanner.nextLine().trim()))) {
                         System.out.println(b);
                     }
                     break;
                 case 5:
                     System.out.println("Please enter author:" + bookRegister.listAuthors().toString());
-                    for (Book b: bookRegister.booksByAuthor(scanner.next())){
+                    scanner.nextLine();
+                    for (Book b: bookRegister.booksByAuthor(scanner.nextLine().trim())){
                         System.out.println(b);
                     }
+                    break;
+                case 8:
+                    isRunning = false;
+                    break;
                 default:
                     System.out.println("The choice was not recognized: "+choice);
             }
         }
     }
 
-    public static void main(String[] args) {
+    private Book createNewBook() {
+        var isbn = captureString("Please enter ISBN: ");
+        var title = captureString("Please enter title: ");
+        var author = captureString("Please enter author: ");
+        var pages = Integer.valueOf(captureString("Please enter number of pages: ")).intValue();
+        var genre = Enum.valueOf(Genre.class, captureString("Please enter genre: " + bookRegister.listGenre().toString()));
+        return new Book(isbn, title, author, pages, genre);
+    }
 
-        Program prog = new Program();
-        prog.menu();
+    public static void main(String[] args) {
+        Program program = new Program();
+        program.menu();
     }
 
 }

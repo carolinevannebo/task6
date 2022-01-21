@@ -31,7 +31,7 @@ public class Book {
                 ", title='" + title + '\'' +
                 ", author='" + author + '\'' +
                 ", numberOfPages=" + numberOfPages +
-                ", genre=" + genre +
+                ", genre=" + genre.name() +
                 '}';
     }
 
