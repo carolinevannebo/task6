@@ -74,4 +74,19 @@ public class BookRegister {
     public void removeBookByISBN(String isbn){
         books.removeIf(book -> book.getIsbn().equalsIgnoreCase(isbn));
     }
+
+    public List<String> listAuthors() {
+        return books
+                .stream()
+                .map(book -> book.getAuthor())
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
+    public List<String> listGenre() {
+        return books.stream()
+                .map(book -> book.getGenre().toString())
+                .sorted()
+                .collect(Collectors.toList());
+    }
 }
