@@ -1,6 +1,6 @@
-package BigTask;
+package no.vannebo.caroline.bookregistry;
 
-public class Book{
+public class Book {
     private String isbn;
     private String title;
     private String author;

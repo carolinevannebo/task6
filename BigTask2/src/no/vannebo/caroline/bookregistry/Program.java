@@ -1,4 +1,4 @@
-package BigTask;
+package no.vannebo.caroline.bookregistry;
 
 import java.io.FileNotFoundException;
 import java.util.InputMismatchException;
@@ -9,14 +9,9 @@ public class Program {
     BookRegister bookRegister;
     Scanner scanner;
 
-    public Program() throws FileNotFoundException {
+    public Program() {
         this.bookRegister = new BookRegister();
         this.scanner = new Scanner(System.in);
-    }
-
-    public void runProgram(){
-        String program = "Program starting";
-        System.out.println(program);
     }
 
     private void printMainMenu() {
@@ -37,7 +32,11 @@ public class Program {
             printMainMenu();
             choice = getInteger(1, 8);
             switch (choice){
-                case 1 -> bookRegister.printAllBook();
+                case 1:
+                    bookRegister.printAllBook();
+                    break;
+                default:
+                    System.out.println("The choice was not recognized: "+choice);
             }
         }
     }
@@ -58,4 +57,11 @@ public class Program {
         scanner.nextLine(); // reading carridge return
         return choice;
     }
+
+    public static void main(String[] args) throws FileNotFoundException {
+
+        Program prog = new Program();
+        prog.handleUI();
+    }
+
 }
