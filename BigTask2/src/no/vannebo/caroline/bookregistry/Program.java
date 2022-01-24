@@ -37,55 +37,52 @@ public class Program {
         while(isRunning){
             printMainMenu();
             int choice = scanner.nextInt();
-            switch (choice){
-                case 1:
+            switch (choice) {
+                case 1 -> {
                     System.out.println("======== LIST ALL BOOKS ========");
                     scanner.nextLine();
                     bookRegister.printAllBook();
-                    break;
-                case 2:
+                }
+                case 2 -> {
                     System.out.println("======== ADD NEW BOOK ========");
                     scanner.nextLine();
                     Book book = createNewBook();
                     bookRegister.addBook(book);
                     bookRegister.printAllBook();
-                    break;
-                case 3:
+                }
+                case 3 -> {
                     System.out.println("======== EDIT BOOK ========"); // This case needs to be completed
                     System.out.println("Unfortunately, this feature is unavailable in your country:)");
-                    break;
-                case 4:
+                }
+                case 4 -> {
                     System.out.println("Please enter genre: " + bookRegister.listGenre().toString());
                     scanner.nextLine();
-                    for (Book b: bookRegister.booksInGenre(Enum.valueOf(Genre.class, scanner.nextLine().trim()))) {
+                    for (Book b : bookRegister.booksInGenre(Enum.valueOf(Genre.class, scanner.nextLine().trim()))) {
                         System.out.println(b);
                     }
-                    break;
-                case 5:
+                }
+                case 5 -> {
                     System.out.println("Please enter author: " + bookRegister.listAuthors().toString());
                     scanner.nextLine();
-                    for (Book b: bookRegister.booksByAuthor(scanner.nextLine().trim())){
+                    for (Book b : bookRegister.booksByAuthor(scanner.nextLine().trim())) {
                         System.out.println(b);
                     }
-                    break;
-                case 6:
+                }
+                case 6 -> {
                     System.out.println("Please enter ISBN: " + bookRegister.listIsbn().toString());
                     scanner.nextLine();
-                    for (Book b: bookRegister.booksByIsbn(scanner.nextLine().trim())){
+                    for (Book b : bookRegister.booksByIsbn(scanner.nextLine().trim())) {
                         System.out.println(b);
                     }
-                    break;
-                case 7:
+                }
+                case 7 -> {
                     System.out.println("======== REMOVE BOOK ========");
                     scanner.nextLine();
                     removeBook(System.in.toString());
                     bookRegister.printAllBook();
-                    break;
-                case 8:
-                    isRunning = false;
-                    break;
-                default:
-                    System.out.println("The choice was not recognized: " + choice);
+                }
+                case 8 -> isRunning = false;
+                default -> System.out.println("The choice was not recognized: " + choice);
             }
         }
     }
