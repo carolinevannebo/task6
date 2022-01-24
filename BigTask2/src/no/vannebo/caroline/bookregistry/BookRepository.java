@@ -21,25 +21,15 @@ public class BookRepository {
             while ((line = br.readLine()) != null) {
                 i++;
                 switch (i) {
-                    case 1:
-                        isbn = line;
-                        break;
-                    case 2:
-                        title = line;
-                        break;
-                    case 3:
-                        author = line;
-                        break;
-                    case 4:
-                        numberOfPages= Integer.valueOf(line);
-                        break;
-                    case 5:
-                        genre=line;
-                        break;
-                    default: // we assume that this line is ---
+                    case 1 -> isbn = line;
+                    case 2 -> title = line;
+                    case 3 -> author = line;
+                    case 4 -> numberOfPages = Integer.parseInt(line);
+                    case 5 -> genre = line;
+                    default -> { // We assume that this line is ---
                         list.add(new Book(isbn, title, author, numberOfPages, Enum.valueOf(Genre.class, genre)));
-                        i=0;
-                        break;
+                        i = 0;
+                    }
                 }
 
             }

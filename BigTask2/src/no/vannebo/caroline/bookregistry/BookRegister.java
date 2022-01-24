@@ -5,7 +5,6 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
-//Veldig bra så langt! Du finner masse her som kan brukes på baeldung, SoF og w3s.
 public class BookRegister {
 
     private final List<Book> books;
@@ -30,10 +29,6 @@ public class BookRegister {
             System.out.println(b);
 
         }
-    }
-
-    public int getNumberOfBooks(){
-        return books.size();
     }
 
     public void addBook(Book book){
@@ -61,14 +56,9 @@ public class BookRegister {
     public List<Book> booksByIsbn(String isbn){
         return books
                 .stream()
-                .filter(book -> book.getAuthor().equals(isbn))
+                .filter(book -> book.getIsbn().equals(isbn))
                 .sorted()
                 .collect(Collectors.toList());
-    }
-
-    public boolean removeBook(Book book)
-    {
-        return books.remove(book);
     }
 
     public void removeBookByISBN(String isbn){
@@ -87,6 +77,14 @@ public class BookRegister {
     public List<String> listGenre() {
         return books.stream()
                 .map(book -> book.getGenre().toString())
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
+    public List<String> listIsbn() {
+        return books.stream()
+                .map(book -> book.getIsbn())
                 .distinct()
                 .sorted()
                 .collect(Collectors.toList());
