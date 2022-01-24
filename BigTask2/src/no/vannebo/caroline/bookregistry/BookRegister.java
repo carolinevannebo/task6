@@ -18,6 +18,7 @@ public class BookRegister {
         String path = null;
         try {
             var url = BookRegister.class.getResource(filename);
+            assert url != null;
             path = Paths.get(url.toURI()).toString();
         } catch (URISyntaxException e) {
             e.printStackTrace();
@@ -108,5 +109,9 @@ public class BookRegister {
             }
         }
         return null;
+    }
+
+    public List<Book> getList(){
+        return this.books;
     }
 }

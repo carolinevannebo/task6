@@ -1,5 +1,6 @@
 package no.vannebo.caroline.bookregistry;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Program {
@@ -24,17 +25,17 @@ public class Program {
         System.out.println("8: Quit");
     }
 
-    private String captureString(String label){
+    private String captureString(String label) {
         System.out.println(label);
         var line = scanner.nextLine().trim();
-        System.out.println("You entered: ["+line+"]");
+        System.out.println("You entered: [" + line + "]");
         return line;
     }
 
-    public void menu(){
+    public void menu() throws IOException {
         boolean isRunning = true;
 
-        while(isRunning){
+        while (isRunning) {
             printMainMenu();
             int choice = scanner.nextInt();
             switch (choice) {
@@ -82,6 +83,7 @@ public class Program {
                     bookRegister.printAllBook();
                 }
                 case 8 -> {
+                    BookRepository.writeBooksToFile(bookRegister.getList());
                     isRunning = false;
                 }
                 default -> System.out.println("The choice was not recognized: " + choice);
@@ -94,41 +96,50 @@ public class Program {
         var title = captureString("Please enter title: ");
         var author = captureString("Please enter author: ");
         var pages = Integer.valueOf(captureString("Please enter number of pages: "));
-        var genre = Enum.valueOf(Genre.class, captureString("Please enter genre: " + bookRegister.listGenre().toString()));
+        var genre = Enum.valueOf(Genre.class, captureString("Please enter genre: " + bookRegister.listGenre().toString()).toUpperCase());
         return new Book(isbn, title, author, pages, genre);
     }
 
 
-    private void modifyBook(){
+    private void modifyBook() {
         System.out.println("Please enter ISBN: " + bookRegister.listIsbn().toString());
         scanner.nextLine(); // leftover new line, unable to send input without it
         String isbn = scanner.nextLine();
+
         Book oldVersionOfBook = bookRegister.getBook(isbn);
-        if (oldVersionOfBook == null){
+        if (oldVersionOfBook == null) {
             System.out.println("Unable to modify book.");
             return;
         }
         System.out.println("Enter new title for: " + oldVersionOfBook.getTitle());
         String title = scanner.nextLine();
+
         System.out.println("Enter new author for: " + oldVersionOfBook.getAuthor());
         String author = scanner.nextLine();
+
         System.out.println("Enter number of pages for: " + oldVersionOfBook.getNumberOfPages());
         Integer pages = scanner.nextInt();
+
         System.out.println("Enter new genre for: " + oldVersionOfBook.getGenre() + bookRegister.listGenre().toString());
         scanner.nextLine(); // leftover new line, unable to send input without it
         Genre genre = Genre.valueOf(scanner.nextLine());
+
         Book newVersionOfBook = new Book(isbn, title, author, pages, genre);
         bookRegister.modifyBook(oldVersionOfBook, newVersionOfBook);
     }
 
-    private void removeBook(String s){
+    private void removeBook(String s) {
         var isbn = captureString("Please enter ISBN: ");
         bookRegister.removeBookByISBN(isbn);
     }
 
     public static void main(String[] args) {
         Program program = new Program();
-        program.menu();
+        try {
+            program.menu();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

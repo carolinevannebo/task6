@@ -19,13 +19,7 @@ public class Book {
 
     @Override
     public String toString() {
-        return "Book{" +
-                "isbn='" + isbn + '\'' +
-                ", title='" + title + '\'' +
-                ", author='" + author + '\'' +
-                ", numberOfPages=" + numberOfPages +
-                ", genre=" + genre +
-                '}';
+        return isbn + '\n' + title + '\n' + author + '\n' + numberOfPages + '\n' + genre + '\n' + "---" + '\n';
     }
 
     public String getAuthor(){

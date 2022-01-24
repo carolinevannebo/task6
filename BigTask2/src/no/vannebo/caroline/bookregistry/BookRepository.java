@@ -30,12 +30,20 @@ public class BookRepository {
                 }
 
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         return list;
     }
+
+    public static void writeBooksToFile(List<Book> newList) throws IOException {
+        File file = new File("./bok2.txt");
+        FileWriter fileWriter = new FileWriter(file);
+        for ( Book book : newList ) {
+            fileWriter.write(book.toString());
+        }
+        fileWriter.close();
+    }
+
 }
