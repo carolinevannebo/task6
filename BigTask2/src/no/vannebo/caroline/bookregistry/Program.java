@@ -13,14 +13,23 @@ public class Program {
         this.scanner = new Scanner(System.in);
     }
 
+    public static void main(String[] args) {
+        Program program = new Program();
+        try {
+            program.menu();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void printMainMenu() {
         System.out.println("======== BOOK REGISTRY ========");
         System.out.println("1: All books");
         System.out.println("2: Add book");
         System.out.println("3: Edit book");
-        System.out.println("4: Find book by genre");
-        System.out.println("5: Find book by author");
-        System.out.println("6: Find book by ISBN");
+        System.out.println("4: Find books by genre");
+        System.out.println("5: Find books by author");
+        System.out.println("6: Find books by ISBN");
         System.out.println("7: Remove book");
         System.out.println("8: Quit");
     }
@@ -34,59 +43,75 @@ public class Program {
 
     public void menu() throws IOException {
         boolean isRunning = true;
-
         while (isRunning) {
-            printMainMenu();
-            int choice = scanner.nextInt();
-            switch (choice) {
-                case 1 -> {
-                    System.out.println("======== LIST ALL BOOKS ========");
-                    scanner.nextLine();
-                    bookRegister.printAllBook();
-                }
-                case 2 -> {
-                    System.out.println("======== ADD NEW BOOK ========");
-                    scanner.nextLine();
-                    Book book = createNewBook();
-                    bookRegister.addBook(book);
-                    bookRegister.printAllBook();
-                }
-                case 3 -> {
-                    System.out.println("======== EDIT BOOK ========"); // This case needs to be completed
-                    modifyBook();
-                }
-                case 4 -> {
-                    System.out.println("Please enter genre: " + bookRegister.listGenre().toString());
-                    scanner.nextLine();
-                    for (Book b : bookRegister.booksInGenre(Enum.valueOf(Genre.class, scanner.nextLine().toUpperCase().trim()))) {
-                        System.out.println(b);
+            try {
+                printMainMenu();
+                int choice = scanner.nextInt();
+                switch (choice) {
+                    case 1 -> {
+                        System.out.println("======== LIST ALL BOOKS ========");
+                        scanner.nextLine();
+                        bookRegister.printAllBook();
                     }
-                }
-                case 5 -> {
-                    System.out.println("Please enter author: " + bookRegister.listAuthors().toString());
-                    scanner.nextLine();
-                    for (Book b : bookRegister.booksByAuthor(scanner.nextLine().trim())) {
-                        System.out.println(b);
+                    case 2 -> {
+                        System.out.println("======== ADD NEW BOOK ========");
+                        scanner.nextLine();
+                        Book book = createNewBook();
+                        bookRegister.addBook(book);
+                        bookRegister.printAllBook();
                     }
-                }
-                case 6 -> {
-                    System.out.println("Please enter ISBN: " + bookRegister.listIsbn().toString());
-                    scanner.nextLine();
-                    for (Book b : bookRegister.booksByIsbn(scanner.nextLine().trim())) {
-                        System.out.println(b);
+                    case 3 -> {
+                        System.out.println("======== EDIT BOOK ========");
+                        modifyBook();
                     }
+                    case 4 -> {
+                        System.out.println("======== FIND BOOKS BY GENRE ========");
+                        scanner.nextLine();
+                        var genre = captureString("Please enter genre " + bookRegister.listGenre().toString());
+                        for(Book b : bookRegister.booksInGenre(genre) ) {
+                            System.out.println(b);
+                        }
+                    }
+                    case 5 -> {
+                        System.out.println("======== FIND BOOKS BY AUTHOR ========");
+                        scanner.nextLine();
+                        var author = captureString("Please enter author: " + bookRegister.listAuthors().toString());
+                        for (Book b : bookRegister.booksByAuthor(author) ) {
+                            System.out.println(b);
+                        }
+                    }
+                    case 6 -> {
+                        System.out.println("======== FIND BOOKS BY ISBN ========");
+                        scanner.nextLine();
+                        var isbn = captureString("Please enter ISBN: " + bookRegister.listIsbn().toString());
+
+                        try {
+                            Integer.parseInt(isbn);
+                        } catch (NumberFormatException e) {
+                            throw new ISBNException("ISBN should be a number.");
+                        }
+
+                        for (Book b : bookRegister.booksByIsbn(isbn) ) {
+                            System.out.println(b);
+                        }
+                    }
+                    case 7 -> {
+                        System.out.println("======== REMOVE BOOK ========");
+                        scanner.nextLine();
+                        removeBook();
+                        bookRegister.printAllBook();
+                    }
+                    case 8 -> {
+                        System.out.println("======== QUIT PROGRAM ========");
+                        BookRepository.writeBooksToFile(bookRegister.getList());
+                        isRunning = false;
+                    }
+                    default -> System.out.println("The choice was not recognized: " + choice);
                 }
-                case 7 -> {
-                    System.out.println("======== REMOVE BOOK ========");
-                    scanner.nextLine();
-                    removeBook(System.in.toString());
-                    bookRegister.printAllBook();
-                }
-                case 8 -> {
-                    BookRepository.writeBooksToFile(bookRegister.getList());
-                    isRunning = false;
-                }
-                default -> System.out.println("The choice was not recognized: " + choice);
+            } catch (ISBNException e) {
+                System.out.println("An error occured, "+ e.getMessage());
+                BookRepository.writeBooksToFile(bookRegister.getList());
+                isRunning = false;
             }
         }
     }
@@ -100,46 +125,51 @@ public class Program {
         return new Book(isbn, title, author, pages, genre);
     }
 
-
     private void modifyBook() {
         System.out.println("Please enter ISBN: " + bookRegister.listIsbn().toString());
         scanner.nextLine(); // leftover new line, unable to send input without it
-        String isbn = scanner.nextLine();
+        var isbn = scanner.nextLine();
 
-        Book oldVersionOfBook = bookRegister.getBook(isbn);
+        var oldVersionOfBook = bookRegister.getBook(isbn);
         if (oldVersionOfBook == null) {
             System.out.println("Unable to modify book.");
             return;
         }
         System.out.println("Enter new title for: " + oldVersionOfBook.getTitle());
-        String title = scanner.nextLine();
+        oldVersionOfBook.setTitle(
+                getNextLineOrDefault(
+                        oldVersionOfBook.getTitle()
+                )
+        );
 
         System.out.println("Enter new author for: " + oldVersionOfBook.getAuthor());
-        String author = scanner.nextLine();
+        oldVersionOfBook.setAuthor(
+                getNextLineOrDefault(oldVersionOfBook.getAuthor())
+        );
 
         System.out.println("Enter number of pages for: " + oldVersionOfBook.getNumberOfPages());
-        Integer pages = scanner.nextInt();
+        oldVersionOfBook.setNumberOfPages(
+                Integer.parseInt(
+                        getNextLineOrDefault(
+                                String.valueOf(
+                                        oldVersionOfBook.getNumberOfPages()))));
 
         System.out.println("Enter new genre for: " + oldVersionOfBook.getGenre() + bookRegister.listGenre().toString());
-        scanner.nextLine(); // leftover new line, unable to send input without it
-        Genre genre = Genre.valueOf(scanner.nextLine());
+        oldVersionOfBook.setGenre(Genre.valueOf(getNextLineOrDefault(oldVersionOfBook.getGenre().toString().toUpperCase())));
 
-        Book newVersionOfBook = new Book(isbn, title, author, pages, genre);
-        bookRegister.modifyBook(oldVersionOfBook, newVersionOfBook);
     }
 
-    private void removeBook(String s) {
+    private String getNextLineOrDefault(String defaultString) {
+        return isEmptyOrDefault(defaultString, scanner.nextLine());
+    }
+
+    private String isEmptyOrDefault(String defaultString, String newString) {
+        return newString.isEmpty() ? defaultString : newString;
+    }
+
+    private void removeBook() {
         var isbn = captureString("Please enter ISBN: ");
         bookRegister.removeBookByISBN(isbn);
-    }
-
-    public static void main(String[] args) {
-        Program program = new Program();
-        try {
-            program.menu();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
 }

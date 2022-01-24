@@ -37,4 +37,20 @@ public class Book {
     public String getTitle() { return title; }
 
     public int getNumberOfPages() { return numberOfPages; }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public void setNumberOfPages(int numberOfPages) {
+        this.numberOfPages = numberOfPages;
+    }
+
+    public void setGenre(Genre genre) {
+        this.genre = genre;
+    }
 }

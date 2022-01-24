@@ -13,7 +13,6 @@ public class BookRegister {
         this.books = BookRepository.getBooksFromFile( toPath("bok.txt"));
     }
 
-
     private String toPath(String filename){
         String path = null;
         try {
@@ -33,35 +32,32 @@ public class BookRegister {
         }
     }
 
-    public void addBook(Book book){
-        if(books.contains(book)) {
-            return;
+    public void addBook(Book book) throws ISBNException {
+        if(books
+                .stream()
+                .filter(f -> f.getIsbn().equals(book.getIsbn()))
+                .count() > 0
+                ) {
+            throw new ISBNException("Could not add book because ISBN: " +book.getIsbn() + " already exit");
         }
         books.add(book);
     }
 
-    public void modifyBook(Book oldVersion, Book newVersion){
-        if ( !oldVersion.getIsbn().equalsIgnoreCase(newVersion.getIsbn()) ){
-            System.out.println("Unable to modify book, ISBN is not a match.");
-            return;
-        }
-        books.remove(oldVersion);
-        books.add(newVersion);
-        System.out.println("Book successfully modified!");
-    }
-
-    public List<Book> booksInGenre(Genre genre){
+    public List<Book> booksInGenre(String genre){
         return books
                 .stream()
-                .filter(book -> book.getGenre().equals(genre) )
+                .filter(f -> f.getGenre()
+                        .name()
+                        .toUpperCase()
+                        .startsWith(genre.toUpperCase())
+                )
                 .collect(Collectors.toList());
     }
-
 
     public List<Book> booksByAuthor(String author){
         return books
                 .stream()
-                .filter(book -> book.getAuthor().equals(author))
+                .filter(f -> f.getAuthor().toUpperCase().startsWith(author.toUpperCase()))
                 .collect(Collectors.toList());
     }
 
@@ -95,19 +91,18 @@ public class BookRegister {
 
     public List<String> listIsbn() {
         return books.stream()
-                .map(book -> book.getIsbn())
+                .map(Book::getIsbn)
                 .distinct()
                 .sorted()
                 .collect(Collectors.toList());
     }
 
     public Book getBook(String isbn){
-        for (Book b: books) {
-            if (b.getIsbn().equalsIgnoreCase(isbn)){
-                return b;
-            }
-        }
-        return null;
+        return books
+                .stream()
+                .filter(f -> f.getIsbn().equalsIgnoreCase(isbn))
+                .findFirst()
+                .orElseThrow();
     }
 
     public List<Book> getList(){
