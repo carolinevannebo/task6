@@ -68,8 +68,7 @@ public class BookRegister {
     public List<Book> booksByIsbn(String isbn){
         return books
                 .stream()
-                .filter(book -> book.getIsbn().equals(isbn))
-                .sorted()
+                .filter(f -> f.getIsbn().startsWith(isbn))
                 .collect(Collectors.toList());
     }
 
@@ -80,7 +79,7 @@ public class BookRegister {
     public List<String> listAuthors() {
         return books
                 .stream()
-                .map(book -> book.getAuthor())
+                .map(Book::getAuthor)
                 .distinct()
                 .sorted()
                 .collect(Collectors.toList());
