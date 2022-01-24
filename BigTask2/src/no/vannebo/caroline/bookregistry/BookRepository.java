@@ -1,9 +1,6 @@
 package no.vannebo.caroline.bookregistry;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +12,7 @@ public class BookRepository {
         try (BufferedReader br = new BufferedReader( new FileReader(path)) ) {
             String line;
             int i = 0;
-            String isbn = null, title = null, author = null, genre=null;
+            String isbn = null, title = null, author = null, genre = null;
             int numberOfPages = 0;
 
             while ((line = br.readLine()) != null) {

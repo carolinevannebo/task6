@@ -40,4 +40,7 @@ public class Book {
         return isbn;
     }
 
+    public String getTitle() { return title; }
+
+    public int getNumberOfPages() { return numberOfPages; }
 }

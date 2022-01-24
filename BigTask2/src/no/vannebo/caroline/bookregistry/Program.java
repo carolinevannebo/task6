@@ -52,12 +52,12 @@ public class Program {
                 }
                 case 3 -> {
                     System.out.println("======== EDIT BOOK ========"); // This case needs to be completed
-                    System.out.println("Unfortunately, this feature is unavailable in your country:)");
+                    modifyBook();
                 }
                 case 4 -> {
                     System.out.println("Please enter genre: " + bookRegister.listGenre().toString());
                     scanner.nextLine();
-                    for (Book b : bookRegister.booksInGenre(Enum.valueOf(Genre.class, scanner.nextLine().trim()))) {
+                    for (Book b : bookRegister.booksInGenre(Enum.valueOf(Genre.class, scanner.nextLine().toUpperCase().trim()))) {
                         System.out.println(b);
                     }
                 }
@@ -81,7 +81,9 @@ public class Program {
                     removeBook(System.in.toString());
                     bookRegister.printAllBook();
                 }
-                case 8 -> isRunning = false;
+                case 8 -> {
+                    isRunning = false;
+                }
                 default -> System.out.println("The choice was not recognized: " + choice);
             }
         }
@@ -96,13 +98,27 @@ public class Program {
         return new Book(isbn, title, author, pages, genre);
     }
 
-    private void printModifierMenu(){ // Possibly part of the solution for case 3.
-        System.out.println("1: Edit ISBN");
-        System.out.println("2: Edit title");
-        System.out.println("3: Edit author");
-        System.out.println("4: Edit number of pages");
-        System.out.println("5: Edit genre" + bookRegister.listGenre().toString());
-        System.out.println("6: Exit");
+
+    private void modifyBook(){
+        System.out.println("Please enter ISBN: " + bookRegister.listIsbn().toString());
+        scanner.nextLine(); // leftover new line, unable to send input without it
+        String isbn = scanner.nextLine();
+        Book oldVersionOfBook = bookRegister.getBook(isbn);
+        if (oldVersionOfBook == null){
+            System.out.println("Unable to modify book.");
+            return;
+        }
+        System.out.println("Enter new title for: " + oldVersionOfBook.getTitle());
+        String title = scanner.nextLine();
+        System.out.println("Enter new author for: " + oldVersionOfBook.getAuthor());
+        String author = scanner.nextLine();
+        System.out.println("Enter number of pages for: " + oldVersionOfBook.getNumberOfPages());
+        Integer pages = scanner.nextInt();
+        System.out.println("Enter new genre for: " + oldVersionOfBook.getGenre() + bookRegister.listGenre().toString());
+        scanner.nextLine(); // leftover new line, unable to send input without it
+        Genre genre = Genre.valueOf(scanner.nextLine());
+        Book newVersionOfBook = new Book(isbn, title, author, pages, genre);
+        bookRegister.modifyBook(oldVersionOfBook, newVersionOfBook);
     }
 
     private void removeBook(String s){

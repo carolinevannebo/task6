@@ -13,6 +13,7 @@ public class BookRegister {
         this.books = BookRepository.getBooksFromFile( toPath("bok.txt"));
     }
 
+
     private String toPath(String filename){
         String path = null;
         try {
@@ -36,6 +37,16 @@ public class BookRegister {
             return;
         }
         books.add(book);
+    }
+
+    public void modifyBook(Book oldVersion, Book newVersion){
+        if ( !oldVersion.getIsbn().equalsIgnoreCase(newVersion.getIsbn()) ){
+            System.out.println("Unable to modify book, ISBN is not a match.");
+            return;
+        }
+        books.remove(oldVersion);
+        books.add(newVersion);
+        System.out.println("Book successfully modified!");
     }
 
     public List<Book> booksInGenre(Genre genre){
@@ -88,5 +99,14 @@ public class BookRegister {
                 .distinct()
                 .sorted()
                 .collect(Collectors.toList());
+    }
+
+    public Book getBook(String isbn){
+        for (Book b: books) {
+            if (b.getIsbn().equalsIgnoreCase(isbn)){
+                return b;
+            }
+        }
+        return null;
     }
 }
